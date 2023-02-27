@@ -2,7 +2,7 @@
  * tools/validationUser
  * Valida os dados do usuário, antes da inserção.
  */
-
+ 
 // Importa configurações do app.
 const conf = require('dotenv').config().parsed;
 

@@ -6,7 +6,7 @@
 // Importa conector do banco de dados.
 const conn = require('../model/mysql');
 
-// importa validador de campos.
+// Importa validador de campos.
 const validate = require('../tools/validationUser')
 
 // Inicializa variáveis.
@@ -99,22 +99,29 @@ const userControl = {
             res.json({ status: "error", message: "Id inválido!" });
         else {
 
-            // Valida preenchimento dos campos.
-            err = validate(req.body);
+            try {
 
-            // Se ocorreram erros...
-            if (err.length > 0) {
-                res.json({ status: "error", message: err })
-            } else {
-                try {
+                // Valida preenchimento dos campos.
+                val = validate(req.body);
+
+                console.log(val)
+
+                // Se ocorreram erros...
+                if (err.length > 0) {
+                    res.json({ status: "error", message: err })
+                } else {
+
+                    // Executa query.
                     const { id } = req.params;
                     const sql = "UPDATE users SET uname = ?, uemail = ?, upassword = SHA1(?), uavatar = ?, ubirth = ? WHERE uid = ?"
                     const [rows] = await conn.query(sql, [user.name, user.email, user.password, user.avatar, user.birth, id]);
                     res.json({ data: rows });
-                } catch (error) {
-                    res.json({ status: "error", message: error });
                 }
             }
+            catch (error) {
+                res.json({ status: "error", message: error });
+            }
+
         }
     }
 

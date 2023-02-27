@@ -1,0 +1,60 @@
+/**
+ * tools/validationThing
+ * Valida os dados de thing, antes da inserção.
+ */
+
+// Importa configurações do app.
+const conf = require('dotenv').config().parsed;
+
+// Importa "Validator.js" → https://github.com/validatorjs/validator.js
+const validator = require('validator');
+
+// Importa ferramentas complementares de validação.
+const appTools = require('../tools/apptools');
+
+// Importa conector do banco de dados.
+const conn = require('../model/mysql');
+
+// Função de validação.
+const validationThing = (thingData) => {
+
+    let err = [];
+    let thing = {};
+
+    // Remove excesso de espaços.
+    for (const key in thingData) {
+        if (typeof thingData[key] == 'string') thing[key] = thingData[key].trim();
+        else thing[key] = thingData[key];
+    }
+
+    // Valida 'user'.
+    if (isNaN(thing.user)) err.push('Usuário inválido');
+
+    // Valida 'name' com pelo menos 3 caracteres.
+    if (validator.isEmpty(thing.name)) err.push('O nome é obrigatório.')
+    else if (!validator.isLength(thing.name, 3)) err.push('O nome está muito curto.')
+
+    // 'photo' é opcional.
+    if (validator.isEmpty(thing.photo)) thing.photo = conf.DEFAULT_PHOTO;
+
+    // Valida 'description' com pelo menos 5 caracteres.
+    if (validator.isEmpty(thing.description)) err.push('A descrição é obrigatória.')
+    else if (!validator.isLength(thing.description, 5)) err.push('A descrição está muito curta.')
+
+    // Valida 'location' com pelo menos 3 caracteres.
+    if (validator.isEmpty(thing.location)) err.push('A localização é obrigatória.')
+    else if (!validator.isLength(thing.location, 3)) err.push('A localização está muito curta.')
+
+    // 'options' é opcional.
+
+    return { err: err, thing: thing };
+
+}
+
+// Exporta módulo.
+module.exports = validationThing;
+
+/**
+ * By Luferat 2023
+ * MIT Licensed
+ */

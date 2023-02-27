@@ -6,6 +6,9 @@
 // Importa conector do banco de dados.
 const conn = require('../model/mysql');
 
+// Importa validador de things.
+const validate = require('../tools/validationThing')
+
 // Objeto "controller" para a entidade "things" do banco de dados.
 const thingControl = {
 
@@ -21,22 +24,44 @@ const thingControl = {
 
   // Lista um registro único pelo Id.
   getOne: async (req, res) => {
+
     try {
+
+      // Extrai o Id da rota.
       const { id } = req.params;
-      const [rows] = await conn.query("SELECT * FROM things WHERE tstatus = 'on' AND tid = ?", [id]);
-      res.json({ data: rows });
+
+      // Valida se o Id é um inteiro.
+      if (isNaN(parseInt(id, 10)))
+        res.json({ status: "error", message: "Id inválido!" });
+      else {
+
+        // Executa a consulta.
+        const { id } = req.params;
+        const [rows] = await conn.query("SELECT * FROM things WHERE tstatus = 'on' AND tid = ?", [id]);
+        res.json({ data: rows });
+      }
     } catch (error) {
       res.json({ status: "error", message: error });
     }
   },
 
-  // apaga um registro único pelo Id.
+  // Apaga um registro único pelo Id.
   delete: async (req, res) => {
     try {
-      const { id } = req.params
-      const sql = "UPDATE things SET tstatus = 'del' WHERE tid = ?"
-      const [rows] = await conn.query(sql, [id]);
-      res.json({ data: rows });
+      // Extrai o Id da rota.
+      const { id } = req.params;
+
+      // Valida se o Id é um inteiro.
+      if (isNaN(parseInt(id, 10)))
+        res.json({ status: "error", message: "Id inválido!" });
+      else {
+
+        // Executa a consulta.
+        const { id } = req.params
+        const sql = "UPDATE things SET tstatus = 'del' WHERE tid = ?"
+        const [rows] = await conn.query(sql, [id]);
+        res.json({ data: rows });
+      }
     } catch (error) {
       res.json({ status: "error", message: error });
     }
@@ -57,14 +82,36 @@ const thingControl = {
 
   // Edita o registro pelo Id.
   put: async (req, res) => {
-    try {
-      const { user, name, photo, description, location, options } = req.body;
-      const { id } = req.params;
-      const sql = "UPDATE things SET tuser = ?, tname = ?, tphoto = ?, tdescription = ?, tlocation = ?, toptions = ? WHERE tid = ?"
-      const [rows] = await conn.query(sql, [user, name, photo, description, location, options, id]);
-      res.json({ data: rows });
-    } catch (error) {
-      res.json({ status: "error", message: error });
+
+    // Extrai o Id da rota.
+    const { id } = req.params;
+
+    // Valida se o Id é um inteiro.
+    if (isNaN(parseInt(id, 10)))
+      res.json({ status: "error", message: "Id inválido!" });
+    else {
+
+      try {
+
+        // Valida preenchimento dos campos.
+        err = validate(req.body);
+
+        // Se ocorreram erros...
+        if (err.length > 0) {
+          res.json({ status: "error", message: err })
+        } else {
+          // Executa a consulta.
+          const { user, name, photo, description, location, options } = req.body;
+          const { id } = req.params;
+          const sql = "UPDATE things SET tuser = ?, tname = ?, tphoto = ?, tdescription = ?, tlocation = ?, toptions = ? WHERE tid = ?"
+          const [rows] = await conn.query(sql, [thing.user, thing.name, thing.photo, thing.description, thing.location, thing.options, id]);
+          res.json({ data: rows });
+        }
+      }
+
+      catch (error) {
+        res.json({ status: "error", message: error });
+      }
     }
   }
 };

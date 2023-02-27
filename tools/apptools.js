@@ -8,8 +8,7 @@ const appTools = {
     // Calcula idade.
     getAge: (birth) => {
         return ~~((Date.now() - +new Date(birth)) / (31557600000));
-    }
-
+    }   
 }
 
 // Exporta o módulo.
