@@ -20,7 +20,7 @@ Aplicativo experimental em Node.js, Express e MySQL.
 
 2. De acordo com sua necessidade e "intimidade" com o GitHub.com, você pode:
 
-      a. **Fazer "Fork" do repositório para seu GitHub.com** 
+    a. **Fazer "Fork" do repositório para seu GitHub.com** 
 Ideal para quem quiser desenvolver sua própria API usando este modelo como base ou ainda, colaborar com a melhoria deste modelo. Para isso, basta clicar no botão [Fork] no alto, à direita da janela.
 
     b. **Baixar uma versão "ZIP"**
